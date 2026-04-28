@@ -1,4 +1,4 @@
-# Intranet UBB – Módulo Perfeccionamiento Académico (v4 con simulador de rol)
+# Módulo Perfeccionamiento Académico
 
 ## Ejecutar
 ```bash

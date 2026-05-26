@@ -9,7 +9,7 @@ Abre http://localhost:5173
 
 ## Roles disponibles
 - Académico/a → Nueva Solicitud, Seguimiento, Documentos
-- Director/a Dpto. (DDA) → Bandeja DDA, Seguimiento, Documentos
-- Decano/a → Bandeja Decanato, Seguimiento, Documentos
-- Secretario/a CPA (SCPA) → Bandeja CPA, Seguimiento, Documentos, Reportes
-- Vicerrectoría (VRAE) → Reportes, Seguimiento
+- Director/a Dpto. → Bandeja, Seguimiento, Documentos
+- Decano/a → Bandeja, Seguimiento, Documentos
+- Comité → Bandeja, Seguimiento, Documentos, Reportes
+- Vicerrectoría (VRA) → Reportes, Seguimiento

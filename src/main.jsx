@@ -12,28 +12,28 @@ const ROLES = [
   },
   {
     id: 'dda',
-    label: 'Director/a Dpto. (DDA)',
+    label: 'Director/a Dpto',
     user: 'Roberto Alcaíno',
     desc: 'Revisa y visa solicitudes de su departamento',
-    views: ['bandeja-dda', 'seguimiento', 'documentos'],
+    views: ['bandeja', 'seguimiento', 'documentos'],
   },
   {
     id: 'decano',
     label: 'Decano/a',
     user: 'Carmen Vidal',
     desc: 'Segunda visación antes del Comité CPA',
-    views: ['bandeja-decanato', 'seguimiento', 'documentos'],
+    views: ['bandeja', 'seguimiento', 'documentos'],
   },
   {
     id: 'scpa',
-    label: 'Secretario/a CPA (SCPA)',
+    label: 'Comité',
     user: 'Valeria Beratto',
-    desc: 'Gestiona tabla del Comité y expedientes',
-    views: ['bandeja-cpa', 'seguimiento', 'documentos', 'reportes'],
+    desc: 'Tercera visación y gestiona expedientes',
+    views: ['bandeja', 'seguimiento', 'documentos', 'reportes'],
   },
   {
-    id: 'vrae',
-    label: 'Vicerrectoría (VRAE)',
+    id: 'vra',
+    label: 'VRA',
     user: 'Marcelo Farías',
     desc: 'Consulta ejecutiva de reportes e indicadores',
     views: ['reportes', 'seguimiento'],
@@ -41,32 +41,30 @@ const ROLES = [
 ]
 
 const ALL_VIEWS = [
-  { id: 'nueva-solicitud',  label: 'Nueva Solicitud' },
-  { id: 'seguimiento',      label: 'Seguimiento' },
-  { id: 'documentos',       label: 'Documentos' },
-  { id: 'bandeja-dda',      label: 'Bandeja DDA' },
-  { id: 'bandeja-decanato', label: 'Bandeja Decanato' },
-  { id: 'bandeja-cpa',      label: 'Bandeja CPA' },
-  { id: 'reportes',         label: 'Reportes' },
+  { id: 'nueva-solicitud', label: 'Nueva Solicitud' },
+  { id: 'seguimiento', label: 'Seguimiento' },
+  { id: 'documentos', label: 'Documentos' },
+  { id: 'bandeja', label: 'Bandeja' },
+  { id: 'reportes', label: 'Reportes' },
 ]
 
 const etapas = [
-  { n:1, label:'Solicitud enviada',   sub:'28/04/2026', state:'done' },
-  { n:2, label:'Revisión DDA',        sub:'Aprobada',   state:'done' },
-  { n:3, label:'Visación Decanato',   sub:'Aprobada',   state:'done' },
-  { n:4, label:'Revisión Comité CPA', sub:'En curso',   state:'current' },
-  { n:5, label:'Acta y beneficios',   sub:'Pendiente',  state:'pending' },
-  { n:6, label:'SIAPER',              sub:'Pendiente',  state:'pending' },
-  { n:7, label:'Resolución final',    sub:'Pendiente',  state:'pending' },
+  { n: 1, label: 'Solicitud en trámite', sub: '28/04/2026', state: 'done' },
+  { n: 2, label: 'Revisión Departamento', sub: 'Aprobada', state: 'done' },
+  { n: 3, label: 'Visación Facultad', sub: 'Aprobada', state: 'done' },
+  { n: 4, label: 'Revisión Comité', sub: 'En curso', state: 'current' },
+  { n: 5, label: 'Siaper', sub: 'Pendiente', state: 'pending' },
+  { n: 6, label: 'Decretación', sub: 'Pendiente', state: 'pending' },
+  { n: 7, label: 'Decretado', sub: 'Pendiente', state: 'pending' },
 ]
 const etapasObs = [
-  { n:1, label:'Solicitud enviada',     sub:'18/04/2026', state:'done' },
-  { n:2, label:'Revisión DDA',          sub:'Observada',  state:'observed' },
-  { n:3, label:'Corrección solicitada', sub:'Pendiente',  state:'pending' },
-  { n:4, label:'Visación Decanato',     sub:'Pendiente',  state:'pending' },
-  { n:5, label:'Comité CPA',            sub:'Pendiente',  state:'pending' },
-  { n:6, label:'SIAPER',                sub:'Pendiente',  state:'pending' },
-  { n:7, label:'Resolución final',      sub:'Pendiente',  state:'pending' },
+  { n: 1, label: 'Solicitud enviada', sub: '18/04/2026', state: 'done' },
+  { n: 2, label: 'Revisión DDA', sub: 'Observada', state: 'observed' },
+  { n: 3, label: 'Corrección solicitada', sub: 'Pendiente', state: 'pending' },
+  { n: 4, label: 'Visación Decanato', sub: 'Pendiente', state: 'pending' },
+  { n: 5, label: 'Comité CPA', sub: 'Pendiente', state: 'pending' },
+  { n: 6, label: 'SIAPER', sub: 'Pendiente', state: 'pending' },
+  { n: 7, label: 'Resolución final', sub: 'Pendiente', state: 'pending' },
 ]
 
 function Badge({ type, children }) {
@@ -198,13 +196,26 @@ function FileRow({ label }) {
       {file
         ? <><span className="file-name">📄 {file.name}</span><button className="btn-remove" onClick={() => setFile(null)}>Quitar</button></>
         : <><button className="btn sec sml" onClick={() => ref.current.click()}>Seleccionar archivo</button>
-            <input ref={ref} type="file" accept=".pdf" hidden onChange={e => setFile(e.target.files[0])} /></>
+          <input ref={ref} type="file" accept=".pdf" hidden onChange={e => setFile(e.target.files[0])} /></>
       }
     </div>
   )
 }
 
 function NuevaSolicitud() {
+
+  const [tipoPerfec, setTipoPerfec] = useState('Postgrado')
+  const [gradoPostula, setGradoPostula] = useState('')
+  const [beneficios, setBeneficios] = useState([])
+  const [tipoJornada, setTipoJornada] = useState('')
+  const [horasJornada, setHorasJornada] = useState('')
+  const [montoMatricula, setMontoMatricula] = useState('')
+  const [montoArancel, setMontoArancel] = useState('')
+  const [montoBeca, setMontoBeca] = useState('')
+
+  const toggleBeneficio = (b, uncheck) =>
+    setBeneficios(prev => uncheck ? prev.filter(x => x !== b) : [...prev, b])
+
   return (
     <div className="page">
       <PageHead
@@ -226,9 +237,23 @@ function NuevaSolicitud() {
       <Panel title="Antecedentes del perfeccionamiento">
         <div className="form-grid cols3">
           <label><span>Tipo de perfeccionamiento</span>
-            <select><option>Postgrado</option><option>Curso</option><option>Diplomado</option><option>Pasantía</option><option>Otro</option></select>
+            <select value={tipoPerfec} onChange={e => { setTipoPerfec(e.target.value); setGradoPostula('') }}>
+              <option value="Postgrado">Postgrado</option>
+              <option value="Curso">Curso</option>
+              <option value="Diplomado">Diplomado</option>
+              <option value="Pasantía">Pasantía / Estadía</option>
+              <option value="Otro">Postdoctorado</option>
+            </select>
           </label>
-          <label><span>Grado al que postula</span><input placeholder="Doctor/a" /></label>
+          {tipoPerfec === 'Postgrado' && (
+            <label><span>Grado al que postula</span>
+              <select value={gradoPostula} onChange={e => setGradoPostula(e.target.value)}>
+                <option value="">Seleccione...</option>
+                <option value="Magíster">Magíster</option>
+                <option value="Doctorado">Doctorado</option>
+              </select>
+            </label>
+          )}
           <label><span>Nombre del programa</span><input placeholder="Doctorado en Educación" /></label>
           <label className="col2"><span>Institución de destino</span><input placeholder="Institución" /></label>
           <label><span>País</span><input placeholder="País" /></label>
@@ -240,20 +265,120 @@ function NuevaSolicitud() {
       </Panel>
       <Panel title="Beneficios solicitados a la Universidad del Bío-Bío">
         <div className="benefits-grid">
-          {['Mantención Total de Remuneraciones','Liberación de Jornada','Beca UBB','Pasajes','Matrículas y Aranceles','Seguro de Salud','Reemplazo Docente'].map(b => (
-            <label key={b} className="benefit-row"><input type="checkbox" /> {b}</label>
-          ))}
+          <label className="benefit-row"><input type="checkbox" /> Mantención Total de Remuneraciones</label>
+          <div className={beneficios.includes('Liberación de Jornada') ? 'benefit-item-expanded' : 'benefit-item'}>
+            <label className="benefit-row">
+              <input type="checkbox"
+                checked={beneficios.includes('Liberación de Jornada')}
+                onChange={e => {
+                  toggleBeneficio('Liberación de Jornada', !e.target.checked)
+                  if (!e.target.checked) { setTipoJornada(''); setHorasJornada('') }
+                }}
+              /> Liberación de Jornada
+            </label>
+            {beneficios.includes('Liberación de Jornada') && (
+              <div className="benefit-sub">
+                {['Jornada completa', 'Jornada media', 'Jornada por horas'].map(op => (
+                  <label key={op} className="benefit-row">
+                    <input type="radio" name="tipoJornada" value={op}
+                      checked={tipoJornada === op}
+                      onChange={e => { setTipoJornada(e.target.value); setHorasJornada('') }}
+                    /> {op}
+                  </label>
+                ))}
+                {tipoJornada === 'Jornada por horas' && (
+                  <label className="benefit-row">
+                    <span style={{ marginRight: '0.5rem' }}>Cantidad de horas:</span>
+                    <input type="number" min="1" placeholder="Ej: 10"
+                      value={horasJornada} onChange={e => setHorasJornada(e.target.value)}
+                      style={{ width: '100px' }}
+                    />
+                  </label>
+                )}
+              </div>
+            )}
+          </div>
+          <div className={beneficios.includes('Beca UBB') ? 'benefit-item-expanded' : 'benefit-item'}>
+            <label className="benefit-row">
+              <input type="checkbox"
+                checked={beneficios.includes('Beca UBB')}
+                onChange={e => {
+                  toggleBeneficio('Beca UBB', !e.target.checked)
+                  if (!e.target.checked) setMontoBeca('')
+                }}
+              /> Beca UBB
+            </label>
+            {beneficios.includes('Beca UBB') && (
+              <div className="benefit-sub">
+                <label className="benefit-row">
+                  <span style={{ marginRight: '0.5rem' }}>Monto ($):</span>
+                  <input type="number" min="0" placeholder="Ej: 500000"
+                    value={montoBeca} onChange={e => setMontoBeca(e.target.value)}
+                    style={{ width: '160px' }}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+          <label className="benefit-row"><input type="checkbox" /> Pasajes</label>
+          <div className={beneficios.includes('Matrícula') ? 'benefit-item-expanded' : 'benefit-item'}>
+            <label className="benefit-row">
+              <input type="checkbox"
+                checked={beneficios.includes('Matrícula')}
+                onChange={e => {
+                  toggleBeneficio('Matrícula', !e.target.checked)
+                  if (!e.target.checked) setMontoMatricula('')
+                }}
+              /> Matrícula
+            </label>
+            {beneficios.includes('Matrícula') && (
+              <div className="benefit-sub">
+                <label className="benefit-row">
+                  <span style={{ marginRight: '0.5rem' }}>Monto ($):</span>
+                  <input type="number" min="0" placeholder="Ej: 200000"
+                    value={montoMatricula} onChange={e => setMontoMatricula(e.target.value)}
+                    style={{ width: '160px' }}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+          <div className={beneficios.includes('Arancel') ? 'benefit-item-expanded' : 'benefit-item'}>
+            <label className="benefit-row">
+              <input type="checkbox"
+                checked={beneficios.includes('Arancel')}
+                onChange={e => {
+                  toggleBeneficio('Arancel', !e.target.checked)
+                  if (!e.target.checked) setMontoArancel('')
+                }}
+              /> Arancel
+            </label>
+            {beneficios.includes('Arancel') && (
+              <div className="benefit-sub">
+                <label className="benefit-row">
+                  <span style={{ marginRight: '0.5rem' }}>Monto ($):</span>
+                  <input type="number" min="0" placeholder="Ej: 1500000"
+                    value={montoArancel} onChange={e => setMontoArancel(e.target.value)}
+                    style={{ width: '160px' }}
+                  />
+                </label>
+              </div>
+            )}
+          </div>
+          <label className="benefit-row"><input type="checkbox" /> Seguro de Salud</label>
+          <label className="benefit-row"><input type="checkbox" /> Reemplazo Docente</label>
+
         </div>
       </Panel>
       <Panel title="Razones que motivan la petición de patrocinio">
-        <textarea className="form-grid" style={{width:'100%',resize:'vertical',padding:'10px',border:'1px solid #c3ced8',height:'100px'}} placeholder="Ingrese la fundamentación académica y estratégica de su solicitud..." />
+        <textarea className="form-grid" style={{ width: '100%', resize: 'vertical', padding: '10px', border: '1px solid #c3ced8', height: '100px' }} placeholder="Ingrese la fundamentación académica y estratégica de su solicitud..." />
       </Panel>
       <Panel title="Adjuntar documentos requeridos">
         <p className="upload-hint">
           Adjunte los documentos requeridos según el Reglamento.
         </p>
         <div className="upload-list">
-          {['Constancia de aceptación','Antecedentes del programa','Beca o financiamiento externo','Carta patrocinio Director/a Departamento','Carta patrocinio Decano/a Facultad'].map((d, i) => (
+          {['Constancia de aceptación / invitación', 'Antecedentes del programa', 'Beca o financiamiento externo', 'Otros'].map((d, i) => (
             <FileRow key={i} label={d} />
           ))}
         </div>
@@ -282,7 +407,7 @@ function Seguimiento({ roleId }) {
         <Panel title="Detalle solicitud N° 14">
           <div className="detail-grid">
             <div><span>Folio</span><strong>PA-2026-014</strong></div>
-            <div><span>Estado</span><Badge type="blue">En Comité CPA</Badge></div>
+            <div><span>Estado</span><Badge type="blue">En Comité</Badge></div>
             <div><span>Programa</span><strong>Doctorado en Educación</strong></div>
             <div><span>Institución</span><strong>Univ. de Granada, España</strong></div>
             <div><span>Período</span><strong>Ago 2026 – Jul 2030</strong></div>
@@ -317,12 +442,12 @@ function Documentos() {
           <thead><tr><th>Documento</th><th>Formato</th><th>Estado</th><th>Fecha</th><th>Acción</th></tr></thead>
           <tbody>
             {[
-              ['Ficha FPPA','PDF','ok','Cargado','28/04/2026'],
-              ['Constancia aceptación','PDF','blue','En revisión','29/04/2026'],
-              ['Antecedentes programa','PDF','ok','Cargado','28/04/2026'],
-              ['Carta patrocinio DDA','PDF','warn','Pendiente','—'],
-              ['Carta patrocinio Decano','PDF','warn','Pendiente','—'],
-            ].map(([doc,fmt,tipo,est,fecha]) => (
+              ['Ficha Postulación', 'PDF', 'ok', 'Cargado', '28/04/2026'],
+              ['Constancia aceptación / invitación', 'PDF', 'blue', 'En revisión', '29/04/2026'],
+              ['Antecedentes programa', 'PDF', 'ok', 'Cargado', '28/04/2026'],
+              ['Beca o financiamiento externo', 'PDF', 'warn', 'Pendiente', '—'],
+              ['Otros', 'PDF', 'warn', 'Pendiente', '—'],
+            ].map(([doc, fmt, tipo, est, fecha]) => (
               <tr key={doc}>
                 <td>{doc}</td><td>{fmt}</td>
                 <td><Badge type={tipo}>{est}</Badge></td>
@@ -353,9 +478,9 @@ function Bandeja({ title, showActions }) {
           <thead><tr><th>Folio</th><th>Académico/a</th><th>Programa</th><th>Estado</th><th>Acción</th></tr></thead>
           <tbody>
             {[
-              ['PA-2026-014','Cristopher Jiménez','Doctorado en Educación','blue','Pendiente'],
-              ['PA-2026-013','María Pérez','Magíster en Gestión','warn','Observada'],
-              ['PA-2026-009','Juan Soto','Pasantía internacional','ok','Visada'],
+              ['PA-2026-014', 'Cristopher Jiménez', 'Doctorado en Educación', 'blue', 'Pendiente'],
+              ['PA-2026-013', 'María Pérez', 'Magíster en Gestión', 'warn', 'Observada'],
+              ['PA-2026-009', 'Juan Soto', 'Pasantía internacional', 'ok', 'Visada'],
             ].map(([folio, nombre, prog, tipo, est]) => (
               <tr key={folio}>
                 <td>{folio}</td><td>{nombre}</td><td>{prog}</td>
@@ -375,6 +500,7 @@ function Bandeja({ title, showActions }) {
             placeholder="Comentario u observación (opcional)..."
           />
           <button className="btn pri">✔ Aprobar</button>
+          <button className="btn warn">⚠ Observar</button>
           <button className="btn danger">✖ Rechazar</button>
         </div>
       </Panel>
@@ -393,8 +519,8 @@ function Reportes() {
         <Panel><span className="stat-label">Finalizadas</span><strong className="stat-num">16</strong></Panel>
       </div>
       <Panel title="Distribución por etapa">
-        {[['Revisión DDA',12,.58],['Decanato',7,.36],['Comité CPA',5,.28],['Finalizadas',16,.78]].map(([l,n,p]) => (
-          <div key={l} className="bar-row"><span>{l}</span><div className="bar"><i style={{width:`${p*100}%`}} /></div><strong>{n}</strong></div>
+        {[['Revisión DDA', 12, .58], ['Decanato', 7, .36], ['Comité CPA', 5, .28], ['Finalizadas', 16, .78]].map(([l, n, p]) => (
+          <div key={l} className="bar-row"><span>{l}</span><div className="bar"><i style={{ width: `${p * 100}%` }} /></div><strong>{n}</strong></div>
         ))}
       </Panel>
     </div>
@@ -419,14 +545,12 @@ function App() {
   const renderView = () => {
     if (!allowedViews.includes(view)) return <NoAccess view={ALL_VIEWS.find(v => v.id === view)?.label} />
     switch (view) {
-      case 'nueva-solicitud':  return <NuevaSolicitud />
-      case 'seguimiento':      return <Seguimiento roleId={roleId} />
-      case 'documentos':       return <Documentos />
-      case 'bandeja-dda':      return <Bandeja title="Bandeja DDA" />
-      case 'bandeja-decanato': return <Bandeja title="Bandeja Decanato" />
-      case 'bandeja-cpa':      return <Bandeja title="Bandeja Comité CPA" />
-      case 'reportes':         return <Reportes />
-      default:                 return <NuevaSolicitud />
+      case 'nueva-solicitud': return <NuevaSolicitud />
+      case 'seguimiento': return <Seguimiento roleId={roleId} />
+      case 'documentos': return <Documentos />
+      case 'bandeja': return <Bandeja title="Bandeja" />
+      case 'reportes': return <Reportes />
+      default: return <NuevaSolicitud />
     }
   }
 
